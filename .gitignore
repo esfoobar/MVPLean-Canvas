@@ -8,3 +8,5 @@ __pycache__
 *.log
 venv
 settings.py
+.vercel
+.env*
