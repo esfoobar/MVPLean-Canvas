@@ -84,9 +84,10 @@
 					<div class="container clearfix">
 						<span class="za-eyebrow">Free &middot; Local &middot; No account required</span>
 						<h1>Your coding agents, running on your own Mac.</h1>
-						<p class="lead">ZeroAgent dispatches a team of Claude Code agents and shows every one of
-							them as a creature on a canvas you can watch, drag, and talk to. It runs entirely on
-							your machine, free, with nothing to sign up for.</p>
+						<p class="lead">ZeroAgent dispatches a team of coding agents, one per ticket, each in its
+							own git worktree. Every worker shows up as a creature on a canvas you can watch, drag,
+							and talk to, from the first commit to the landed PR. It runs entirely on your
+							machine, free, with nothing to sign up for.</p>
 						<div class="topmargin">
 							<a href="/zeroagent/download/" class="button button-rounded button-large">Download for Mac</a>
 							<a href="#compare" class="button button-rounded button-large button-border button-light" data-scrollto="#compare" data-easing="easeInOutExpo" data-speed="900" data-offset="80">See what's free</a>
@@ -99,7 +100,8 @@
 					<div class="heading-block center">
 						<h2>The canvas is the product</h2>
 						<span>Workers are not rows in a table. They are creatures on a 2D canvas: status reads
-							at a glance from motion and colour, and a click opens the transcript.</span>
+							at a glance from motion and colour, so you can watch several agents at once without
+							losing track of any of them, and a click opens the transcript.</span>
 					</div>
 
 					<div class="za-screenshot-placeholder">
@@ -127,8 +129,8 @@
 									<i class="i-alt noborder icon-share2"></i>
 								</div>
 								<h4>Lead agent and worker dispatch</h4>
-								<p>The full MCP tool surface: dispatch, message, and retire workers from one
-									conversation.</p>
+								<p>Hand it a ticket and it spins up a worker in its own worktree. Message it,
+									watch it, or retire it, all from one conversation.</p>
 							</div>
 						</div>
 
@@ -138,8 +140,8 @@
 									<i class="i-alt noborder icon-code-fork"></i>
 								</div>
 								<h4>A worktree per worker</h4>
-								<p>Branch management, retire and sweep, with no parent link holding a worker
-									hostage to the session that spawned it.</p>
+								<p>Branch management, retire and sweep, all the way to a landed PR, with no
+									parent link holding a worker hostage to the session that spawned it.</p>
 							</div>
 						</div>
 
@@ -148,8 +150,8 @@
 								<div class="fbox-icon">
 									<i class="i-alt noborder icon-cloud"></i>
 								</div>
-								<h4>Bring your own CLI and keys</h4>
-								<p>ZeroAgent drives the Claude Code CLI already on your Mac, on your own model
+								<h4>Bring your own agent and keys</h4>
+								<p>ZeroAgent drives the coding agent CLI already on your Mac, on your own model
 									keys. Nothing routes through a server of ours.</p>
 							</div>
 						</div>
@@ -202,9 +204,9 @@
 
 				<div class="container clearfix bottommargin-lg">
 					<div class="za-note">
-						<p><strong>Prerequisite:</strong> ZeroAgent drives the Claude Code CLI already installed
-							on your Mac. Install Claude Code first if you have not (<code>npm install -g @anthropic-ai/claude-code</code>),
-							and ZeroAgent takes it from there.</p>
+						<p><strong>Prerequisite:</strong> ZeroAgent coordinates the work; it drives a coding
+							agent CLI already installed on your Mac to do it. Works with Claude Code today.
+							Codex and other agents are coming.</p>
 					</div>
 				</div>
 
