@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="MVPLean" />
+	<meta name="robots" content="noindex">
+	<!-- Not linked from the main mvplean.com navigation and not in sitemap.xml until
+	     launch (ZA-149). Launch removes this noindex meta tag, adds the nav link and
+	     the sitemap entry. -->
+
+	<!-- Stylesheets
+	============================================= -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700|Raleway:300,400,500,600,700|Crete+Round:400i" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="/static/css/bootstrap.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/font-icons.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/animate.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/custom.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/responsive.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/zeroagent.css" type="text/css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<!-- Document Title
+	============================================= -->
+	<title>Download ZeroAgent - free for Mac</title>
+
+	<!--
+	DRAFT MARKETING COPY. Placeholder text grounded in docs/MONETIZATION.md in
+	the zeroagent repo, written for structure and accuracy, not final wording.
+	Jorge polishes this before launch (ZA-149).
+	-->
+
+</head>
+
+<body class="stretched">
+
+	<!-- Document Wrapper
+	============================================= -->
+	<div id="wrapper" class="clearfix">
+
+		<!-- Header
+		============================================= -->
+		<header id="header" class="full-header">
+
+			<div id="header-wrap">
+
+				<div class="container clearfix">
+
+					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+
+					<!-- Logo
+					============================================= -->
+					<div id="logo">
+						<a href="/" class="standard-logo"><img src="/static/images/logo.png" alt="MVPLean Logo"></a>
+						<a href="/" class="retina-logo"><img src="/static/images/logo@2x.png" alt="MVPLean Logo"></a>
+					</div><!-- #logo end -->
+
+					<!-- Primary Navigation
+					============================================= -->
+					<nav id="primary-menu" class="style-3">
+
+						<ul>
+							<li><a href="/"><div>mvplean.com</div></a></li>
+							<li><a href="/zeroagent/"><div>ZeroAgent</div></a></li>
+						</ul>
+
+					</nav><!-- #primary-menu end -->
+
+				</div>
+
+			</div>
+
+		</header><!-- #header end -->
+
+		<!-- Content
+		============================================= -->
+		<section id="content">
+
+			<div class="content-wrap">
+
+				<div class="container clearfix">
+
+					<div class="heading-block center">
+						<h1>Download ZeroAgent</h1>
+						<span>Free, notarized, and yours to keep. No registration, no invite code.</span>
+					</div>
+
+					<p class="center za-meta">
+						Version <strong id="za-version">Checking latest version&hellip;</strong>
+						&middot; Released <span id="za-release-date">&mdash;</span>
+					</p>
+
+					<div class="col_half">
+						<div class="za-platform-card">
+							<i class="icon-apple"></i>
+							<h4>Apple Silicon</h4>
+							<p class="za-meta">M1, M2, M3, and M4 Macs.</p>
+							<a id="za-download-arm64" href="#" class="button button-rounded button-dark button-full">Download for Apple Silicon</a>
+							<span id="za-arm64-hash" class="za-hash">Checking checksum&hellip;</span>
+						</div>
+					</div>
+
+					<div class="col_half col_last">
+						<div class="za-platform-card">
+							<i class="icon-apple"></i>
+							<h4>Intel</h4>
+							<p class="za-meta">Intel-based Macs.</p>
+							<a id="za-download-x64" href="#" class="button button-rounded button-dark button-full">Download for Intel</a>
+							<span id="za-x64-hash" class="za-hash">Checking checksum&hellip;</span>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="container clearfix topmargin-lg">
+					<div class="line"></div>
+				</div>
+
+				<div class="container clearfix topmargin-lg bottommargin-lg">
+
+					<div class="heading-block">
+						<h3>Prefer Homebrew? <span class="za-badge-soon">Coming soon</span></h3>
+						<span>The cask is not published yet (ZA-147). This is the command once it is; keep it
+							handy.</span>
+					</div>
+
+					<div class="za-snippet">
+						<code id="za-brew-line">brew install --cask zeroagent</code>
+						<button type="button" class="za-copy-btn" data-copy-target="za-brew-line">Copy</button>
+					</div>
+
+				</div>
+
+				<div class="container clearfix bottommargin-lg">
+					<div class="za-note">
+						<p><strong>Prerequisite:</strong> ZeroAgent drives the Claude Code CLI already installed
+							on your Mac. Install Claude Code first if you have not (<code>npm install -g @anthropic-ai/claude-code</code>),
+							and ZeroAgent takes it from there.</p>
+					</div>
+				</div>
+
+				<div class="container clearfix bottommargin-lg">
+					<p class="center za-meta">Changelog &mdash; coming soon.</p>
+				</div>
+
+			</div>
+
+		</section><!-- #content end -->
+
+		<!-- Footer
+		============================================= -->
+		<footer id="footer" class="dark">
+
+			<div class="container">
+
+				<div id="section-contact">
+
+					<div class="footer-widgets-wrap clearfix">
+
+						<img src="/static/images/footer-widget-logo.png" alt="" class="footer-logo">
+
+						<div class="col_two_third">
+
+							<div class="col_one_third">
+								<div class="widget clearfix">
+									<p>ZeroAgent is a free, local desktop app from <strong>MVPLean</strong>.</p>
+								</div>
+							</div>
+
+							<div class="col_one_third">
+								<div class="widget clearfix">
+									<p><a href="/zeroagent/">About ZeroAgent</a><br>
+									<a href="/zeroagent/terms/">Terms</a><br>
+									<a href="/zeroagent/privacy/">Privacy</a></p>
+								</div>
+							</div>
+
+							<div class="col_one_third col_last">
+								<div class="widget clearfix">
+									<abbr title="Send Us An email"><strong>Email:</strong></abbr> hello@mvplean.com
+								</div>
+							</div>
+
+						</div>
+
+					</div><!-- .footer-widgets-wrap end -->
+				</div>
+
+			</div>
+
+			<!-- Copyrights
+			============================================= -->
+			<div id="copyrights">
+
+				<div class="container clearfix">
+
+					<div class="col_half">
+						Copyrights &copy; 2026 All Rights Reserved by MVPLean.<br>
+					</div>
+
+				</div>
+
+			</div><!-- #copyrights end -->
+
+		</footer><!-- #footer end -->
+
+	</div><!-- #wrapper end -->
+
+	<!-- Go To Top
+	============================================= -->
+	<div id="gotoTop" class="icon-angle-up"></div>
+
+	<!-- External JavaScripts
+	============================================= -->
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/js/plugins.js"></script>
+
+	<!-- Footer Scripts
+	============================================= -->
+	<script src="/static/js/functions.js"></script>
+	<script src="/static/js/zeroagent-release.js"></script>
+
+	<!-- Google analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-BTHHJB4E4T"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-BTHHJB4E4T');
+	</script>
+
+</body>
+</html>

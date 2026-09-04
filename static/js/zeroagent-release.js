@@ -1,0 +1,167 @@
+/*
+ * Release feed addresses for the /zeroagent/download/ page.
+ *
+ * PLACEHOLDER: ZA-146 (zeroagent issue #256) owns the real bucket/CDN base URL
+ * and the stable per-arch path scheme; it had not posted them as of this
+ * writing. Update the four values below when it lands. Nothing else in this
+ * file, or in download/index.html, needs to change.
+ */
+var RELEASE_FEED = {
+	baseUrl: 'https://zeroagent.mvplean.com/releases',
+	latestManifestPath: '/latest-mac.yml',
+	stable: {
+		arm64: '/ZeroAgent-latest-arm64.dmg',
+		x64: '/ZeroAgent-latest-x64.dmg'
+	}
+};
+
+(function () {
+	'use strict';
+
+	function setText(id, text) {
+		var el = document.getElementById(id);
+		if (el) el.textContent = text;
+	}
+
+	function setHref(id, href) {
+		var el = document.getElementById(id);
+		if (el && href) el.setAttribute('href', href);
+	}
+
+	// Minimal reader for electron-builder's latest-mac.yml shape: flat
+	// top-level "key: value" pairs plus one "files:" list of "- url" blocks
+	// each followed by indented "sha512:" / "sha256:" / "size:" fields. This
+	// is not a general YAML parser and is not meant to be one; it returns
+	// null on anything it does not recognize so the caller can degrade.
+	function parseLatestMacYml(text) {
+		try {
+			var lines = text.split('\n');
+			var result = { files: [] };
+			var currentFile = null;
+
+			for (var i = 0; i < lines.length; i++) {
+				var line = lines[i];
+				if (!line.trim() || line.trim().indexOf('#') === 0) continue;
+
+				var fileItemMatch = line.match(/^\s*-\s+url:\s*(.+?)\s*$/);
+				if (fileItemMatch) {
+					currentFile = { url: fileItemMatch[1] };
+					result.files.push(currentFile);
+					continue;
+				}
+
+				var fileFieldMatch = line.match(/^\s{4,}(\w+):\s*(.+?)\s*$/);
+				if (fileFieldMatch && currentFile) {
+					currentFile[fileFieldMatch[1]] = fileFieldMatch[2];
+					continue;
+				}
+
+				var topMatch = line.match(/^(\w+):\s*(.+?)\s*$/);
+				if (topMatch) {
+					currentFile = null;
+					result[topMatch[1]] = topMatch[2].replace(/^['"]|['"]$/g, '');
+				}
+			}
+
+			return result.version ? result : null;
+		} catch (err) {
+			return null;
+		}
+	}
+
+	function findArchFile(files, arch, ext) {
+		if (!files) return null;
+		for (var i = 0; i < files.length; i++) {
+			var url = files[i].url || '';
+			if (url.indexOf('-' + arch + '.' + ext) !== -1) return files[i];
+		}
+		return null;
+	}
+
+	function formatDate(iso) {
+		try {
+			var d = new Date(iso);
+			if (isNaN(d.getTime())) return null;
+			return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+		} catch (err) {
+			return null;
+		}
+	}
+
+	function applyHash(idPrefix, file) {
+		if (file && file.sha512) {
+			setText(idPrefix + '-hash', 'SHA-512: ' + file.sha512);
+		} else if (file && file.sha256) {
+			setText(idPrefix + '-hash', 'SHA-256: ' + file.sha256);
+		} else {
+			setText(idPrefix + '-hash', 'Checksum unavailable.');
+		}
+	}
+
+	function init() {
+		// Buttons already point at the stable, arch-specific URLs before any
+		// fetch runs, so a slow, unreachable or CORS-blocked feed never
+		// leaves a download button without a working link.
+		setHref('za-download-arm64', RELEASE_FEED.baseUrl + RELEASE_FEED.stable.arm64);
+		setHref('za-download-x64', RELEASE_FEED.baseUrl + RELEASE_FEED.stable.x64);
+
+		var manifestUrl = RELEASE_FEED.baseUrl + RELEASE_FEED.latestManifestPath;
+		var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+		var timeoutId = controller ? setTimeout(function () { controller.abort(); }, 6000) : null;
+
+		fetch(manifestUrl, controller ? { signal: controller.signal } : {})
+			.then(function (res) {
+				if (!res.ok) throw new Error('release feed returned ' + res.status);
+				return res.text();
+			})
+			.then(function (text) {
+				var manifest = parseLatestMacYml(text);
+				if (!manifest) throw new Error('unrecognized release feed format');
+
+				setText('za-version', 'v' + manifest.version);
+				var releaseDate = formatDate(manifest.releaseDate);
+				setText('za-release-date', releaseDate || 'unknown');
+
+				var arm64Dmg = findArchFile(manifest.files, 'arm64', 'dmg');
+				var x64Dmg = findArchFile(manifest.files, 'x64', 'dmg');
+
+				if (arm64Dmg) setHref('za-download-arm64', RELEASE_FEED.baseUrl + '/' + arm64Dmg.url);
+				if (x64Dmg) setHref('za-download-x64', RELEASE_FEED.baseUrl + '/' + x64Dmg.url);
+
+				applyHash('za-arm64', arm64Dmg);
+				applyHash('za-x64', x64Dmg);
+			})
+			.catch(function () {
+				setText('za-version', 'Version unavailable');
+				setText('za-release-date', 'unavailable');
+				setText('za-arm64-hash', 'Checksum unavailable.');
+				setText('za-x64-hash', 'Checksum unavailable.');
+			})
+			.then(function () {
+				if (timeoutId) clearTimeout(timeoutId);
+			});
+	}
+
+	function copyToClipboard(text, buttonEl) {
+		if (!navigator.clipboard) return;
+		navigator.clipboard.writeText(text).then(function () {
+			var original = buttonEl.textContent;
+			buttonEl.textContent = 'Copied';
+			setTimeout(function () { buttonEl.textContent = original; }, 1500);
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		init();
+
+		var copyButtons = document.querySelectorAll('[data-copy-target]');
+		for (var i = 0; i < copyButtons.length; i++) {
+			(function (btn) {
+				btn.addEventListener('click', function () {
+					var targetEl = document.getElementById(btn.getAttribute('data-copy-target'));
+					if (targetEl) copyToClipboard(targetEl.textContent, btn);
+				});
+			})(copyButtons[i]);
+		}
+	});
+})();
