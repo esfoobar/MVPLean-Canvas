@@ -204,14 +204,18 @@
 							<a href="/zeroagent/download/" class="button button-rounded button-large">Download for Mac</a>
 							<a href="#coordinator" class="button button-rounded button-large button-border button-light" data-scrollto="#coordinator" data-easing="easeInOutExpo" data-speed="900" data-offset="80">See how it works</a>
 						</div>
-						<img src="/static/images/zeroagent/web/1-hero-1x.png"
-							srcset="/static/images/zeroagent/web/1-hero-1x.png 1x, /static/images/zeroagent/web/1-hero-2x.png 2x"
-							width="680" height="546"
-							alt="The ZeroAgent canvas showing four worker creatures spread across the zeroagent and zerovision repositories, task titles and repo badges under each one, and a background script running as a gear icon with an elapsed-time readout."
-							class="za-hero-shot topmargin"
-							loading="eager" />
-						<!-- A hero video (MP4 with poster) can replace this img tag once recordings exist;
-						     see the ZA-175 report for exactly where to drop it in. -->
+						<video class="za-hero-shot topmargin"
+							width="680" height="425"
+							poster="/static/images/zeroagent/web/hero-dark-poster.jpg"
+							autoplay muted loop playsinline
+							aria-label="The ZeroAgent canvas dispatching several worker creatures, each with a task tag and repo badge, spreading across a dark canvas while one runs a background script shown as a spinning gear with an elapsed-time readout.">
+							<source src="/static/videos/zeroagent/hero-dark.webm" type="video/webm">
+							<img src="/static/images/zeroagent/web/hero-dark.gif"
+								width="680" height="425"
+								alt="The ZeroAgent canvas dispatching several worker creatures, each with a task tag and repo badge, spreading across a dark canvas while one runs a background script shown as a spinning gear with an elapsed-time readout."
+								class="za-hero-shot topmargin"
+								loading="eager" />
+						</video>
 					</div>
 				</div>
 
