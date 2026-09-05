@@ -4,10 +4,6 @@
 
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="MVPLean" />
-	<meta name="robots" content="noindex">
-	<!-- Not linked from the main mvplean.com navigation and not in sitemap.xml until
-	     launch (ZA-149). Launch removes this noindex meta tag, adds the nav link and
-	     the sitemap entry. -->
 
 	<!-- Stylesheets
 	============================================= -->
@@ -24,13 +20,42 @@
 
 	<!-- Document Title
 	============================================= -->
-	<title>Download ZeroAgent - free for Mac</title>
+	<title>Download ZeroAgent for Mac, Free for Apple Silicon or Intel</title>
+	<meta name="description" content="Download ZeroAgent free for Apple Silicon or Intel Macs. Notarized, no registration, no account. Works with Claude Code today." />
+	<link rel="canonical" href="https://mvplean.com/zeroagent/download/" />
 
-	<!--
-	DRAFT MARKETING COPY. Placeholder text grounded in docs/MONETIZATION.md in
-	the zeroagent repo, written for structure and accuracy, not final wording.
-	Jorge polishes this before launch (ZA-149).
-	-->
+	<!-- Open Graph / Twitter
+	============================================= -->
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="MVPLean" />
+	<meta property="og:title" content="Download ZeroAgent for Mac, Free for Apple Silicon or Intel" />
+	<meta property="og:description" content="Download ZeroAgent free for Apple Silicon or Intel Macs. Notarized, no registration, no account. Works with Claude Code today." />
+	<meta property="og:url" content="https://mvplean.com/zeroagent/download/" />
+	<meta property="og:image" content="https://mvplean.com/static/images/zeroagent/web/og-zeroagent-v1.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="The ZeroAgent canvas showing four worker creatures spread across two repositories, with a background script running as a gear icon." />
+	<meta property="og:locale" content="en_US" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@mvplean" />
+	<meta name="twitter:title" content="Download ZeroAgent for Mac, Free for Apple Silicon or Intel" />
+	<meta name="twitter:description" content="Download ZeroAgent free for Apple Silicon or Intel Macs. Notarized, no registration, no account. Works with Claude Code today." />
+	<meta name="twitter:image" content="https://mvplean.com/static/images/zeroagent/web/og-zeroagent-v1.png" />
+	<meta name="twitter:image:alt" content="The ZeroAgent canvas showing four worker creatures spread across two repositories, with a background script running as a gear icon." />
+
+	<!-- Structured data
+	============================================= -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		"itemListElement": [
+			{ "@type": "ListItem", "position": 1, "name": "MVPLean", "item": "https://mvplean.com/" },
+			{ "@type": "ListItem", "position": 2, "name": "ZeroAgent", "item": "https://mvplean.com/zeroagent/" },
+			{ "@type": "ListItem", "position": 3, "name": "Download", "item": "https://mvplean.com/zeroagent/download/" }
+		]
+	}
+	</script>
 
 </head>
 
@@ -90,10 +115,11 @@
 					<p class="center za-meta">
 						Version <strong id="za-version">Checking latest version&hellip;</strong>
 						&middot; Released <span id="za-release-date">&mdash;</span>
+						&middot; Release notes coming soon
 					</p>
 
 					<div class="col_half">
-						<div class="za-platform-card">
+						<div class="za-platform-card" id="za-card-arm64">
 							<i class="icon-apple"></i>
 							<h4>Apple Silicon</h4>
 							<p class="za-meta">M1, M2, M3, and M4 Macs.</p>
@@ -103,7 +129,7 @@
 					</div>
 
 					<div class="col_half col_last">
-						<div class="za-platform-card">
+						<div class="za-platform-card" id="za-card-x64">
 							<i class="icon-apple"></i>
 							<h4>Intel</h4>
 							<p class="za-meta">Intel-based Macs.</p>
@@ -112,37 +138,34 @@
 						</div>
 					</div>
 
-				</div>
-
-				<div class="container clearfix topmargin-lg">
-					<div class="line"></div>
-				</div>
-
-				<div class="container clearfix topmargin-lg bottommargin-lg">
-
-					<div class="heading-block">
-						<h3>Prefer Homebrew? <span class="za-badge-soon">Coming soon</span></h3>
-						<span>The cask is not published yet (ZA-147). This is the command once it is; keep it
-							handy.</span>
+					<div class="container clearfix topmargin-sm bottommargin-lg">
+						<p class="center za-agree">By downloading, you agree to the <a href="/zeroagent/terms/">Terms</a>
+							and <a href="/zeroagent/privacy/">Privacy Policy</a>.</p>
 					</div>
 
-					<div class="za-snippet">
-						<code id="za-brew-line">brew install --cask zeroagent</code>
-						<button type="button" class="za-copy-btn" data-copy-target="za-brew-line">Copy</button>
+					<div class="container clearfix bottommargin-lg">
+						<div class="za-note">
+							<p><strong>Prerequisite:</strong> ZeroAgent coordinates the work; it drives a coding
+								agent CLI already installed on your Mac to do it. Works with Claude Code today.
+								Codex and other agents are coming.</p>
+						</div>
 					</div>
 
-				</div>
-
-				<div class="container clearfix bottommargin-lg">
-					<div class="za-note">
-						<p><strong>Prerequisite:</strong> ZeroAgent coordinates the work; it drives a coding
-							agent CLI already installed on your Mac to do it. Works with Claude Code today.
-							Codex and other agents are coming.</p>
+					<div class="container clearfix topmargin-lg">
+						<div class="line"></div>
 					</div>
-				</div>
 
-				<div class="container clearfix bottommargin-lg">
-					<p class="center za-meta">Changelog &mdash; coming soon.</p>
+					<div class="container clearfix topmargin-lg bottommargin-lg">
+
+						<div class="heading-block">
+							<h3>Prefer Homebrew?</h3>
+						</div>
+
+						<p>A Homebrew cask is coming soon. Once it ships, <code>brew install --cask zeroagent</code>
+							will do the same install as the DMG above.</p>
+
+					</div>
+
 				</div>
 
 			</div>
@@ -221,6 +244,7 @@
 	============================================= -->
 	<script src="/static/js/functions.js"></script>
 	<script src="/static/js/zeroagent-release.js"></script>
+	<script src="/static/js/zeroagent-arch.js"></script>
 
 	<!-- Google analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-BTHHJB4E4T"></script>
