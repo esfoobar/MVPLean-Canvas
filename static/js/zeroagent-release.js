@@ -1,17 +1,16 @@
 /*
  * Release feed addresses for the /zeroagent/download/ page.
  *
- * PLACEHOLDER: ZA-146 (zeroagent issue #256) owns the real bucket/CDN base URL
- * and the stable per-arch path scheme; it had not posted them as of this
- * writing. Update the four values below when it lands. Nothing else in this
- * file, or in download/index.html, needs to change.
+ * ZA-172: the branded hostname for the zeroagent release feed, a CloudFront
+ * alias in front of the zeroagent-releases bucket. See the URL scheme in
+ * zeroagent's docs/RELEASE.md.
  */
 var RELEASE_FEED = {
-	baseUrl: 'https://zeroagent.mvplean.com/releases',
+	baseUrl: 'https://releases.zeroagent.mvplean.com',
 	latestManifestPath: '/latest-mac.yml',
 	stable: {
-		arm64: '/ZeroAgent-latest-arm64.dmg',
-		x64: '/ZeroAgent-latest-x64.dmg'
+		arm64: '/latest/ZeroAgent-arm64.dmg',
+		x64: '/latest/ZeroAgent-x64.dmg'
 	}
 };
 
