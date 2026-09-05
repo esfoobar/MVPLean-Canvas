@@ -263,171 +263,89 @@
 								app, not a trial.</span>
 						</div>
 
-						<!-- Coordinator cards: the loop, model and cost selection, memory, the context
-						     handoff restart, and notification judgment. Promoted per Eric's 2026-09-05 note:
-						     these are the gap Orca (onorca.dev) doesn't cover, so they lead the grid. -->
+						<!-- Coordinator facts lead per Eric's 2026-09-05 note: the loop, model and cost
+						     selection, memory, the context handoff, and notification judgment are the gap
+						     Orca (onorca.dev) doesn't cover. Plain facts, no screenshots exist for these. -->
 
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-refresh"></i></div>
-								<h3>It keeps checking so you do not have to</h3>
-								<p>The lead sets itself reminders that fire on their own, tracks anything happening
-									somewhere it can't watch directly like a CI run or a background agent polling a
-									remote job, and notices on its own when a piece of work has gone quiet, raising
-									exactly one task with one concrete question instead of paging you for every
-									worker that finishes.</p>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-refresh"></i>It keeps checking so you do not have to</h3>
+								<p>The lead sets itself reminders that fire on their own, tracks anything a
+									background agent is polling somewhere it can't watch directly like a CI run,
+									and raises exactly one task with one concrete question when work has gone
+									quiet, instead of paging you for every worker that finishes.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-cog"></i></div>
-								<h3>Automatic model selection per dispatch</h3>
-								<p>Routine work goes to a cheaper model, judgment calls go to a stronger one, chosen
-									for each dispatch rather than a dropdown you have to remember to change.</p>
-								<img src="/static/images/zeroagent/web/6-model-selection-1x.png"
-									srcset="/static/images/zeroagent/web/6-model-selection-1x.png 1x, /static/images/zeroagent/web/6-model-selection-2x.png 2x"
-									width="479" height="217"
-									alt="A worker's panel header naming the model it's running on, Sonnet 5, next to its live status and elapsed time."
-									loading="lazy" />
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-cog"></i>Automatic model selection per dispatch</h3>
+								<p>Routine work goes to a cheaper model, judgment calls go to a stronger one,
+									chosen for each dispatch rather than a dropdown you have to remember to
+									change.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third col_last">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-dollar"></i></div>
-								<h3>Per worker cost tracking</h3>
-								<p>Every worker carries its own bill: tokens in and out, running cost, right there
-									on the canvas, so you know what a piece of work cost before you approve the
-									next one.</p>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-dollar"></i>Per worker cost tracking</h3>
+								<p>Every worker carries its own bill: tokens in and out, running cost, right
+									there on the canvas, so you know what a piece of work cost before you
+									approve the next one.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-lightbulb"></i></div>
-								<h3>It remembers what you told it, between sessions</h3>
+						<div class="col_one_fourth col_last">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-lightbulb"></i>It remembers what you told it, between sessions</h3>
 								<p>A local, self-cleaning memory means a coding agent that remembers across
 									sessions, so you don't re-explain your preferences and context every time you
 									open the app.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-battery-75"></i></div>
-								<h3>Context tracking, with a handoff that survives a long session</h3>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-battery-75"></i>Context tracking, with a handoff that survives a long session</h3>
 								<p>The app shows how full the lead's and each worker's context window is, live.
 									When the lead fills up, it writes itself a handoff note and restarts clean,
 									roster intact, so a long session never loses the thread.</p>
-								<img src="/static/images/zeroagent/web/4-context-1x.png"
-									srcset="/static/images/zeroagent/web/4-context-1x.png 1x, /static/images/zeroagent/web/4-context-2x.png 2x"
-									width="280" height="41"
-									alt="A context fill bar showing a worker two thirds through its context window on the Fable 5.1 model."
-									loading="lazy" />
 							</div>
 						</div>
 
-						<div class="col_one_third col_last">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-bell"></i></div>
-								<h3>It interrupts you only when you have to decide</h3>
-								<p>A real macOS notification when work is genuinely blocked on you, a job finished
-									long after you walked away, or a cost cap is about to be crossed, never for a
-									routine completion. Click it and the exact worker's transcript opens.</p>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-bell"></i>It interrupts you only when you have to decide</h3>
+								<p>A real macOS notification when work is genuinely blocked on you, a job
+									finished long after you walked away, or a cost cap is about to be crossed,
+									never for a routine completion. Click it and the exact worker's transcript
+									opens.</p>
 							</div>
 						</div>
 
-						<!-- Middle cards: the rest of what you get. -->
-
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-list2"></i></div>
-								<h3>A task list that groups agents by the work they serve</h3>
-								<p>Workers are grouped under the piece of work they serve, with a title a person
-									would actually use instead of an internal ticket id.</p>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-list2"></i>A task list that groups agents by the work they serve</h3>
+								<p>Workers are grouped under the piece of work they serve, with a title a
+									person would actually use instead of an internal ticket id.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-picture"></i></div>
-								<h3>Artifacts you can look at, not just diffs</h3>
-								<p>When a worker builds something meant to be seen, a chart, a page, a small app,
-									it opens right inside ZeroAgent in its own sandboxed window, not a file path
-									that fails to open.</p>
-								<img src="/static/images/zeroagent/web/7-artifact-window-1x.png"
-									srcset="/static/images/zeroagent/web/7-artifact-window-1x.png 1x, /static/images/zeroagent/web/7-artifact-window-2x.png 2x"
-									width="480" height="510"
-									alt="A worker-built page open in ZeroAgent's sandboxed artifact window, with its own address bar and open-in-browser and reveal-in-Finder controls."
-									loading="lazy" />
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-eye"></i>Read only agents for questions and surveys</h3>
+								<p>Dispatch a worker that can look and report but can't write, for a question
+									or a survey where you don't want anything in the repo to change.</p>
 							</div>
 						</div>
 
-						<div class="col_one_third col_last">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-search"></i></div>
-								<h3>Fuzzy file search across every repo in the workspace</h3>
-								<p>Find any file in any repo without leaving the app: a fuzzy finder over your
-									whole projects folder, matching on partial names and word starts, with results
-									ready as you type.</p>
-								<img src="/static/images/zeroagent/web/9-cmd-k-1x.png"
-									srcset="/static/images/zeroagent/web/9-cmd-k-1x.png 1x, /static/images/zeroagent/web/9-cmd-k-2x.png 2x"
-									width="480" height="290"
-									alt="The Cmd+K fuzzy finder open with 'zeroagent' typed, showing matched file paths with bolded characters."
-									loading="lazy" />
-							</div>
-						</div>
-
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-comment2"></i></div>
-								<h3>Talk to a running agent and correct it mid flight</h3>
-								<p>Click a worker's transcript and send it a message while it's still working,
-									instead of killing it and starting over.</p>
-								<img src="/static/images/zeroagent/web/12-worker-transcript-1x.png"
-									srcset="/static/images/zeroagent/web/12-worker-transcript-1x.png 1x, /static/images/zeroagent/web/12-worker-transcript-2x.png 2x"
-									width="480" height="417"
-									alt="An open worker transcript mid-conversation, with a message box to send the worker a correction directly."
-									loading="lazy" />
-							</div>
-						</div>
-
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-eye"></i></div>
-								<h3>Read only agents for questions and surveys</h3>
-								<p>Dispatch a worker that can look and report but can't write, for a question or a
-									survey where you don't want anything in the repo to change.</p>
-							</div>
-						</div>
-
-						<div class="col_one_third col_last">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-folder-open"></i></div>
-								<h3>One workspace, many repositories</h3>
-								<p>ZeroAgent is pointed at your whole projects folder, not one repo, so the same
-									conversation can delegate coding tasks to agents across every repository you
-									have, each worker badged with where it's checked out.</p>
-								<img src="/static/images/zeroagent/web/8-file-explorer-1x.png"
-									srcset="/static/images/zeroagent/web/8-file-explorer-1x.png 1x, /static/images/zeroagent/web/8-file-explorer-2x.png 2x"
-									width="480" height="550"
-									alt="The file explorer's sidebar listing dozens of repositories under one projects folder, with a markdown file open on the right."
-									loading="lazy" />
-							</div>
-						</div>
-
-						<!-- Demoted per Eric's 2026-09-05 note: still true and still needed for
-						     credibility, but no longer the reason anyone picks ZeroAgent. -->
-
-						<div class="col_one_third">
-							<div class="feature-box fbox-center fbox-light fbox-effect nobottomborder">
-								<div class="fbox-icon"><i class="i-alt noborder icon-code-fork"></i></div>
-								<h3>Parallel workers, one git worktree each</h3>
-								<p>Every dispatched worker gets its own git worktree and branch, cut and cleaned up
-									automatically, so five things happening at once never collide. A worker's work
-									lands as a real pull request under your own conventions before its worktree is
-									retired.</p>
+						<div class="col_one_fourth">
+							<div class="za-fact">
+								<h3><i class="za-fact-icon icon-code-fork"></i>Parallel workers, one git worktree each</h3>
+								<p>Every dispatched worker gets its own git worktree and branch, cut and
+									cleaned up automatically, so five things happening at once never collide.
+									A worker's work lands as a real pull request under your own conventions
+									before its worktree is retired.</p>
 							</div>
 						</div>
 
@@ -435,6 +353,87 @@
 				</div>
 
 				<div class="section nobottommargin notopmargin za-section-alt">
+					<div class="container clearfix">
+
+						<div class="heading-block center">
+							<h2>See it in the app</h2>
+							<span>Five of the pieces above, as they actually look on the canvas.</span>
+						</div>
+
+						<div class="col_one_third">
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/6-model-selection-1x.png"
+										srcset="/static/images/zeroagent/web/6-model-selection-1x.png 1x, /static/images/zeroagent/web/6-model-selection-2x.png 2x"
+										width="400" height="266"
+										alt="A worker's panel header naming the model it's running on, Sonnet 5, next to its live status and elapsed time."
+										loading="lazy" />
+								</div>
+								<h3>Model selection per dispatch</h3>
+								<p>Named right in the worker's own panel, not hidden in a settings screen.</p>
+							</div>
+						</div>
+
+						<div class="col_one_third">
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/7-artifact-window-1x.png"
+										srcset="/static/images/zeroagent/web/7-artifact-window-1x.png 1x, /static/images/zeroagent/web/7-artifact-window-2x.png 2x"
+										width="400" height="266"
+										alt="A worker-built page open in ZeroAgent's sandboxed artifact window, with its own address bar and open-in-browser and reveal-in-Finder controls."
+										loading="lazy" />
+								</div>
+								<h3>Artifacts, not just diffs</h3>
+								<p>A chart, a page, a small app a worker built, opened right inside the app.</p>
+							</div>
+						</div>
+
+						<div class="col_one_third col_last">
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/9-cmd-k-1x.png"
+										srcset="/static/images/zeroagent/web/9-cmd-k-1x.png 1x, /static/images/zeroagent/web/9-cmd-k-2x.png 2x"
+										width="400" height="266"
+										alt="The Cmd+K fuzzy finder open with 'zeroagent' typed, showing matched file paths with bolded characters."
+										loading="lazy" />
+								</div>
+								<h3>Fuzzy search, every repo</h3>
+								<p>Find any file in any repo without leaving the app.</p>
+							</div>
+						</div>
+
+						<div class="col_one_third">
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/12-worker-transcript-1x.png"
+										srcset="/static/images/zeroagent/web/12-worker-transcript-1x.png 1x, /static/images/zeroagent/web/12-worker-transcript-2x.png 2x"
+										width="400" height="266"
+										alt="An open worker transcript mid-conversation, with a message box to send the worker a correction directly."
+										loading="lazy" />
+								</div>
+								<h3>Talk to a running agent</h3>
+								<p>Send a message mid flight instead of killing it and starting over.</p>
+							</div>
+						</div>
+
+						<div class="col_one_third">
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/8-file-explorer-1x.png"
+										srcset="/static/images/zeroagent/web/8-file-explorer-1x.png 1x, /static/images/zeroagent/web/8-file-explorer-2x.png 2x"
+										width="400" height="266"
+										alt="The file explorer's sidebar listing dozens of repositories under one projects folder, with a markdown file open on the right."
+										loading="lazy" />
+								</div>
+								<h3>One workspace, many repositories</h3>
+								<p>The same conversation reaches every repository in your projects folder.</p>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="section nobottommargin notopmargin">
 					<div class="container clearfix">
 
 						<div class="heading-block center">
