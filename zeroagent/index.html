@@ -267,88 +267,71 @@
 						     selection, memory, the context handoff, and notification judgment are the gap
 						     Orca (onorca.dev) doesn't cover. Plain facts, no screenshots exist for these. -->
 
-						<div class="col_one_fourth">
+						<div class="za-facts-grid">
+
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-refresh"></i>It keeps checking so you do not have to</h3>
-								<p>The lead sets itself reminders that fire on their own, tracks anything a
-									background agent is polling somewhere it can't watch directly like a CI run,
-									and raises exactly one task with one concrete question when work has gone
-									quiet, instead of paging you for every worker that finishes.</p>
+								<p>The lead sets itself reminders that fire on their own, tracks background
+									work it can't watch like a CI run, and raises one task with one question
+									when work goes quiet, instead of paging you for every worker that finishes.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-cog"></i>Automatic model selection per dispatch</h3>
 								<p>Routine work goes to a cheaper model, judgment calls go to a stronger one,
 									chosen for each dispatch rather than a dropdown you have to remember to
 									change.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-dollar"></i>Per worker cost tracking</h3>
 								<p>Every worker carries its own bill: tokens in and out, running cost, right
 									there on the canvas, so you know what a piece of work cost before you
 									approve the next one.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth col_last">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-lightbulb"></i>It remembers what you told it, between sessions</h3>
 								<p>A local, self-cleaning memory means a coding agent that remembers across
 									sessions, so you don't re-explain your preferences and context every time you
 									open the app.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
-								<h3><i class="za-fact-icon icon-battery-75"></i>Context tracking, with a handoff that survives a long session</h3>
+								<h3><i class="za-fact-icon icon-battery-75"></i>Context tracking, with a handoff for long sessions</h3>
 								<p>The app shows how full the lead's and each worker's context window is, live.
 									When the lead fills up, it writes itself a handoff note and restarts clean,
 									roster intact, so a long session never loses the thread.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-bell"></i>It interrupts you only when you have to decide</h3>
-								<p>A real macOS notification when work is genuinely blocked on you, a job
-									finished long after you walked away, or a cost cap is about to be crossed,
-									never for a routine completion. Click it and the exact worker's transcript
-									opens.</p>
+								<p>A real macOS notification when work is blocked on you, a job finished long
+									after you walked away, or a cost cap is about to be crossed, never for a
+									routine completion. Click it to open that worker's transcript.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
-								<h3><i class="za-fact-icon icon-list2"></i>A task list that groups agents by the work they serve</h3>
+								<h3><i class="za-fact-icon icon-list2"></i>A task list grouped by what it serves</h3>
 								<p>Workers are grouped under the piece of work they serve, with a title a
 									person would actually use instead of an internal ticket id.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-eye"></i>Read only agents for questions and surveys</h3>
 								<p>Dispatch a worker that can look and report but can't write, for a question
 									or a survey where you don't want anything in the repo to change.</p>
 							</div>
-						</div>
 
-						<div class="col_one_fourth">
 							<div class="za-fact">
 								<h3><i class="za-fact-icon icon-code-fork"></i>Parallel workers, one git worktree each</h3>
 								<p>Every dispatched worker gets its own git worktree and branch, cut and
-									cleaned up automatically, so five things happening at once never collide.
-									A worker's work lands as a real pull request under your own conventions
-									before its worktree is retired.</p>
+									cleaned up automatically, so several things happening at once never collide.
+									Its work lands as a pull request under your conventions before the worktree
+									retires.</p>
 							</div>
-						</div>
 
+						</div>
 					</div>
 				</div>
 
@@ -357,10 +340,11 @@
 
 						<div class="heading-block center">
 							<h2>See it in the app</h2>
-							<span>Five of the pieces above, as they actually look on the canvas.</span>
+							<span>Six of the pieces above, as they actually look on the canvas.</span>
 						</div>
 
-						<div class="col_one_third">
+						<div class="za-shots-grid">
+
 							<div class="za-shot-card">
 								<div class="za-shot-frame">
 									<img src="/static/images/zeroagent/web/6-model-selection-1x.png"
@@ -372,9 +356,7 @@
 								<h3>Model selection per dispatch</h3>
 								<p>Named right in the worker's own panel, not hidden in a settings screen.</p>
 							</div>
-						</div>
 
-						<div class="col_one_third">
 							<div class="za-shot-card">
 								<div class="za-shot-frame">
 									<img src="/static/images/zeroagent/web/7-artifact-window-1x.png"
@@ -386,9 +368,7 @@
 								<h3>Artifacts, not just diffs</h3>
 								<p>A chart, a page, a small app a worker built, opened right inside the app.</p>
 							</div>
-						</div>
 
-						<div class="col_one_third col_last">
 							<div class="za-shot-card">
 								<div class="za-shot-frame">
 									<img src="/static/images/zeroagent/web/9-cmd-k-1x.png"
@@ -400,9 +380,7 @@
 								<h3>Fuzzy search, every repo</h3>
 								<p>Find any file in any repo without leaving the app.</p>
 							</div>
-						</div>
 
-						<div class="col_one_third">
 							<div class="za-shot-card">
 								<div class="za-shot-frame">
 									<img src="/static/images/zeroagent/web/12-worker-transcript-1x.png"
@@ -414,9 +392,7 @@
 								<h3>Talk to a running agent</h3>
 								<p>Send a message mid flight instead of killing it and starting over.</p>
 							</div>
-						</div>
 
-						<div class="col_one_third">
 							<div class="za-shot-card">
 								<div class="za-shot-frame">
 									<img src="/static/images/zeroagent/web/8-file-explorer-1x.png"
@@ -428,8 +404,20 @@
 								<h3>One workspace, many repositories</h3>
 								<p>The same conversation reaches every repository in your projects folder.</p>
 							</div>
-						</div>
 
+							<div class="za-shot-card">
+								<div class="za-shot-frame">
+									<img src="/static/images/zeroagent/web/13-report-rendered-1x.png"
+										srcset="/static/images/zeroagent/web/13-report-rendered-1x.png 1x, /static/images/zeroagent/web/13-report-rendered-2x.png 2x"
+										width="400" height="266"
+										alt="A worker's markdown report open in the app, formatted with headings, bullets and inline code rather than a wall of plain text."
+										loading="lazy" />
+								</div>
+								<h3>A report, not a wall of text</h3>
+								<p>A worker's writeup renders as a formatted page, right where the work happened.</p>
+							</div>
+
+						</div>
 					</div>
 				</div>
 
