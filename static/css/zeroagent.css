@@ -183,7 +183,32 @@
 }
 
 /* Text-only facts grid: deliberately flat, no card chrome, so it reads
-   as a different kind of section from the screenshot grid below it. */
+   as a different kind of section from the screenshot grid below it.
+   A real grid, not the theme's float columns, so every row starts on
+   the same line regardless of how tall its neighbours are. */
+
+.za-facts-grid,
+.za-shots-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	column-gap: 4%;
+	row-gap: 40px;
+	align-items: start;
+}
+
+@media (max-width: 991px) {
+	.za-facts-grid,
+	.za-shots-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 767px) {
+	.za-facts-grid,
+	.za-shots-grid {
+		grid-template-columns: 1fr;
+	}
+}
 
 .za-fact {
 	text-align: left;
