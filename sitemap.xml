@@ -5,5 +5,15 @@
     <loc>https://mvplean.com/</loc>
     <priority>0</priority>
   </url>
-  
+
+  <url>
+    <loc>https://mvplean.com/zeroagent/terms/</loc>
+    <priority>0</priority>
+  </url>
+
+  <url>
+    <loc>https://mvplean.com/zeroagent/privacy/</loc>
+    <priority>0</priority>
+  </url>
+
 </urlset>
