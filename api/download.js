@@ -8,10 +8,25 @@
  * records one event to Vercel Blob and then answers a 302 straight to the
  * CDN file. Recording never blocks the download for long: the blob put has
  * a hard timeout, and a version lookup that fails just says "unknown".
+ *
+ * ZA-204 adds a second, additive report of the same event to GA4 via the
+ * Measurement Protocol (see api/_lib/ga4.js and zeroagent/docs/DOWNLOADS.md),
+ * so it never affects the Blob write or the 302: it is dispatched in
+ * parallel with the Blob put, never awaited on the response path, and kept
+ * alive past the response with waitUntil so it can still finish once the
+ * redirect has already gone out.
  */
 
 import { put } from '@vercel/blob';
+import { waitUntil } from '@vercel/functions';
 import { parseUserAgent } from './_lib/ua.js';
+import {
+	extractClientId,
+	randomClientId,
+	firstForwardedIp,
+	buildDownloadServedPayload,
+	sendGa4Event,
+} from './_lib/ga4.js';
 
 const VALID_ARCHES = new Set(['arm64', 'x64']);
 const RELEASES_BASE = 'https://releases.zeroagent.mvplean.com';
@@ -80,6 +95,36 @@ function firstHeader(value) {
 	return value;
 }
 
+// Fire-and-forget: builds and sends the GA4 event, catching everything
+// internally so a caller never needs to await or catch this. Returns the
+// in-flight promise only so it can be handed to waitUntil.
+function reportToGa4(req, { arch, version, ts }) {
+	const apiSecret = process.env.GA4_API_SECRET;
+	if (!apiSecret) {
+		console.log('[ga4] GA4_API_SECRET is not set; skipping the Measurement Protocol event');
+		return Promise.resolve();
+	}
+
+	const clientId = extractClientId(firstHeader(req.headers['cookie'])) || randomClientId();
+	const ua = firstHeader(req.headers['user-agent']) || '';
+	const ip = firstForwardedIp(firstHeader(req.headers['x-forwarded-for']), firstHeader(req.headers['x-real-ip']));
+	const referer = firstHeader(req.headers['referer']) || null;
+
+	const payload = buildDownloadServedPayload({
+		clientId,
+		arch,
+		version,
+		ua,
+		ip,
+		referer,
+		timestampMs: ts.getTime(),
+	});
+
+	return sendGa4Event({ payload, apiSecret }).catch((err) => {
+		console.log(`[ga4] Measurement Protocol request failed: ${err && err.message}`);
+	});
+}
+
 export default async function handler(req, res) {
 	const rawArch = req.query && req.query.arch;
 	const arch = String(Array.isArray(rawArch) ? rawArch[0] : rawArch || '');
@@ -137,18 +182,23 @@ export default async function handler(req, res) {
 			].join('-') + '.json',
 		].join('/');
 
-		try {
-			await withTimeout(
-				put(pathname, JSON.stringify(event), {
-					access: 'private',
-					addRandomSuffix: true,
-					contentType: 'application/json',
-				}),
-				PUT_TIMEOUT_MS
-			);
-		} catch (err) {
+		const blobWrite = withTimeout(
+			put(pathname, JSON.stringify(event), {
+				access: 'private',
+				addRandomSuffix: true,
+				contentType: 'application/json',
+			}),
+			PUT_TIMEOUT_MS
+		).catch(() => {
 			// A store failure never blocks the download.
-		}
+		});
+
+		// Dispatched in parallel with the Blob write above, never awaited on
+		// the response path; waitUntil keeps it alive past the 302 that
+		// follows below.
+		waitUntil(reportToGa4(req, { arch, version, ts }));
+
+		await blobWrite;
 	}
 
 	res.statusCode = 302;
