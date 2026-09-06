@@ -10,3 +10,5 @@ venv
 settings.py
 .vercel
 .env*
+.claude
+node_modules

@@ -22,11 +22,6 @@ var RELEASE_FEED = {
 		if (el) el.textContent = text;
 	}
 
-	function setHref(id, href) {
-		var el = document.getElementById(id);
-		if (el && href) el.setAttribute('href', href);
-	}
-
 	// Minimal reader for electron-builder's latest-mac.yml shape: flat
 	// top-level "key: value" pairs plus one "files:" list of "- url" blocks
 	// each followed by indented "sha512:" / "sha256:" / "size:" fields. This
@@ -98,12 +93,11 @@ var RELEASE_FEED = {
 	}
 
 	function init() {
-		// Buttons already point at the stable, arch-specific URLs before any
-		// fetch runs, so a slow, unreachable or CORS-blocked feed never
-		// leaves a download button without a working link.
-		setHref('za-download-arm64', RELEASE_FEED.baseUrl + RELEASE_FEED.stable.arm64);
-		setHref('za-download-x64', RELEASE_FEED.baseUrl + RELEASE_FEED.stable.x64);
-
+		// The buttons' hrefs are static in the HTML (ZA-165): the counted
+		// redirect at /zeroagent/download/arm64 and /zeroagent/download/x64,
+		// so the link works with JavaScript off and a copied link is
+		// counted too. This script only reads the feed for the version text
+		// and the checksums now; it never rewrites a button's href.
 		var manifestUrl = RELEASE_FEED.baseUrl + RELEASE_FEED.latestManifestPath;
 		var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
 		var timeoutId = controller ? setTimeout(function () { controller.abort(); }, 6000) : null;
@@ -118,14 +112,12 @@ var RELEASE_FEED = {
 				if (!manifest) throw new Error('unrecognized release feed format');
 
 				setText('za-version', 'v' + manifest.version);
+				window.ZA_RELEASE_VERSION = manifest.version;
 				var releaseDate = formatDate(manifest.releaseDate);
 				setText('za-release-date', releaseDate || 'unknown');
 
 				var arm64Dmg = findArchFile(manifest.files, 'arm64', 'dmg');
 				var x64Dmg = findArchFile(manifest.files, 'x64', 'dmg');
-
-				if (arm64Dmg) setHref('za-download-arm64', RELEASE_FEED.baseUrl + '/' + arm64Dmg.url);
-				if (x64Dmg) setHref('za-download-x64', RELEASE_FEED.baseUrl + '/' + x64Dmg.url);
 
 				applyHash('za-arm64', arm64Dmg);
 				applyHash('za-x64', x64Dmg);

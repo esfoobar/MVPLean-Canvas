@@ -1,0 +1,9 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"rewrites": [
+		{
+			"source": "/zeroagent/download/:arch(arm64|x64)",
+			"destination": "/api/download?arch=:arch"
+		}
+	]
+}
