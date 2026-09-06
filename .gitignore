@@ -10,3 +10,4 @@ venv
 settings.py
 .vercel
 .env*
+.claude
