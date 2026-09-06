@@ -495,6 +495,14 @@
 		return (n || 0).toLocaleString();
 	}
 
+	function fmtDateTime(ts, fallbackDate) {
+		var d = ts ? new Date(ts) : null;
+		if (!d || isNaN(d.getTime())) return fallbackDate || '—';
+		var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+		return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) +
+			' ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes());
+	}
+
 	function getToken() {
 		try { return sessionStorage.getItem(TOKEN_KEY); } catch (e) { return null; }
 	}
@@ -544,6 +552,28 @@
 		tooltip.style.display = 'none';
 	}
 
+	// The endpoint only returns days that actually had events, so a window
+	// with one day of data would draw one bar filling the whole chart. This
+	// fills in the rest of the selected window, ending today (UTC), with
+	// zero-count days so the width always reads as the window, not the data.
+	function fillDayGaps(byDay, days) {
+		var counts = {};
+		(byDay || []).forEach(function (d) { counts[d.date] = d.count; });
+
+		var n = parseInt(days, 10);
+		if (!isFinite(n) || n < 1) n = (byDay && byDay.length) || 1;
+
+		var end = new Date();
+		end.setUTCHours(0, 0, 0, 0);
+
+		var out = [];
+		for (var i = n - 1; i >= 0; i--) {
+			var key = new Date(end.getTime() - i * 86400000).toISOString().slice(0, 10);
+			out.push({ date: key, count: counts[key] || 0 });
+		}
+		return out;
+	}
+
 	function renderDayChart(byDay) {
 		var chart = document.getElementById('daychart');
 		var axis = document.getElementById('day-axis');
@@ -560,15 +590,16 @@
 		wrap.hidden = false;
 		empty.hidden = true;
 
-		var max = byDay.reduce(function (m, d) { return Math.max(m, d.count); }, 0) || 1;
+		var filled = fillDayGaps(byDay, daysSelect.value);
+		var max = filled.reduce(function (m, d) { return Math.max(m, d.count); }, 0) || 1;
 
-		byDay.forEach(function (d) {
+		filled.forEach(function (d) {
 			var col = document.createElement('div');
 			col.className = 'col';
 			var bar = document.createElement('div');
 			bar.className = 'bar';
 			bar.tabIndex = 0;
-			bar.style.height = Math.max(2, Math.round((d.count / max) * 100)) + '%';
+			bar.style.height = d.count ? (Math.max(2, Math.round((d.count / max) * 100)) + '%') : '0%';
 			var label = d.date + ': ' + fmtInt(d.count) + (d.count === 1 ? ' download' : ' downloads');
 			bar.setAttribute('aria-label', label);
 			bar.addEventListener('mousemove', function (e) { positionTooltip(e, label); });
@@ -582,8 +613,8 @@
 			chart.appendChild(col);
 		});
 
-		var first = byDay[0].date;
-		var last = byDay[byDay.length - 1].date;
+		var first = filled[0].date;
+		var last = filled[filled.length - 1].date;
 		axis.innerHTML = '<span>' + esc(first) + '</span><span>' + esc(last) + '</span>';
 	}
 
@@ -624,7 +655,7 @@
 
 		body.innerHTML = rows.map(function (r) {
 			return '<tr>' +
-				'<td>' + esc(r.date) + '</td>' +
+				'<td>' + esc(fmtDateTime(r.ts, r.date)) + '</td>' +
 				'<td class="arch">' + esc(r.arch) + '</td>' +
 				'<td>' + esc(r.version) + '</td>' +
 				'<td>' + esc(r.country || 'unknown') + '</td>' +

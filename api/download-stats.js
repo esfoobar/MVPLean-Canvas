@@ -4,7 +4,10 @@
  * versus bots split, and breakdowns by day, arch, version, country, browser
  * and OS. Every one of those comes from list()'s pathnames alone (the
  * pathname layout was chosen for exactly this), except the 25 newest events
- * in "last", which need their bodies for city and referrer.
+ * in "last", which need their bodies for city and referrer. Each pathname's
+ * own leading epoch-ms segment gives every event a timestamp too, so "last"
+ * carries an ISO "ts" (the body's own when the body fetch succeeds, else
+ * derived from that epoch ms) and is sorted newest first by it.
  *
  * Token-gated: this is download telemetry, not something to leave open.
  */
@@ -50,8 +53,9 @@ function parsePathname(pathname) {
 	const basename = parts[2].replace(/\.json$/, '');
 	const fields = basename.split('-');
 	if (fields.length < 6) return null;
-	const [, arch, version, country, browser, os] = fields;
-	return { date, arch, version, country, browser, os };
+	const [epochMs, arch, version, country, browser, os] = fields;
+	const tsMs = Number(epochMs);
+	return { date, arch, version, country, browser, os, tsMs: Number.isFinite(tsMs) ? tsMs : null };
 }
 
 function isHuman(browser) {
@@ -164,8 +168,10 @@ export default async function handler(req, res) {
 	const last = [];
 	for (const row of newest) {
 		const body = await readEventBody(row.blob.pathname);
+		const ts = (body && body.ts) || (row.tsMs != null ? new Date(row.tsMs).toISOString() : null);
 		last.push({
 			date: row.date,
+			ts,
 			arch: row.arch,
 			version: row.version,
 			country: (body && body.country) || row.country,
@@ -175,6 +181,11 @@ export default async function handler(req, res) {
 			referrer: body ? body.referrer : null,
 		});
 	}
+	last.sort((a, b) => {
+		const at = a.ts ? Date.parse(a.ts) : 0;
+		const bt = b.ts ? Date.parse(b.ts) : 0;
+		return bt - at;
+	});
 
 	res.statusCode = 200;
 	res.setHeader('Content-Type', 'application/json; charset=utf-8');
