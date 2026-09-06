@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 import {
 	extractClientId,
 	randomClientId,
+	extractSessionId,
+	fallbackSessionId,
 	firstForwardedIp,
 	refererHost,
 	buildDownloadServedPayload,
@@ -47,6 +49,43 @@ test('randomClientId returns a unique-looking string each call', () => {
 	assert.notEqual(a, b);
 });
 
+test('extractSessionId reads the session id out of a GS1-format _ga_<container> cookie', () => {
+	const cookie = '_ga=GA1.2.111.222; _ga_BTHHJB4E4T=GS1.1.1728318000.5.1.1728318010.0.0.0';
+	assert.equal(extractSessionId(cookie), '1728318000');
+});
+
+test('extractSessionId reads the session id out of a GS2-format _ga_<container> cookie', () => {
+	const cookie = '_ga_BTHHJB4E4T=GS2.1.s1728318000$o5$g1$t1728318010$j60$l0$h0';
+	assert.equal(extractSessionId(cookie), '1728318000');
+});
+
+test('extractSessionId decodes a URL-encoded cookie value', () => {
+	const cookie = '_ga_BTHHJB4E4T=GS1.1.1728318000.5.1.1728318010.0.0.0'.replace('.', '%2E');
+	assert.equal(extractSessionId(cookie), '1728318000');
+});
+
+test('extractSessionId returns null when there is no matching cookie', () => {
+	assert.equal(extractSessionId('foo=bar; _ga=GA1.2.111.222'), null);
+	assert.equal(extractSessionId(''), null);
+	assert.equal(extractSessionId(null), null);
+	assert.equal(extractSessionId(undefined), null);
+});
+
+test('extractSessionId returns null for a value with too few segments or an unparseable third segment', () => {
+	assert.equal(extractSessionId('_ga_BTHHJB4E4T=GS1.1'), null);
+	assert.equal(extractSessionId('_ga_BTHHJB4E4T=GS2.1.onotasessionid'), null);
+});
+
+test('extractSessionId honors a custom measurementId when deriving the cookie name', () => {
+	const cookie = '_ga_ABC123=GS1.1.999.1.1.999.0.0.0';
+	assert.equal(extractSessionId(cookie, 'G-ABC123'), '999');
+	assert.equal(extractSessionId(cookie, 'G-BTHHJB4E4T'), null);
+});
+
+test('fallbackSessionId derives a session id from a timestamp in milliseconds', () => {
+	assert.equal(fallbackSessionId(1_700_000_000_000), '1700000000');
+});
+
 test('firstForwardedIp takes the first entry of x-forwarded-for', () => {
 	assert.equal(firstForwardedIp('203.0.113.5, 70.41.3.18, 150.172.238.178', null), '203.0.113.5');
 });
@@ -75,6 +114,7 @@ test('refererHost returns "direct" when there is no referer or it is unparsable'
 test('buildDownloadServedPayload builds a well-formed Measurement Protocol body', () => {
 	const payload = buildDownloadServedPayload({
 		clientId: '111.222',
+		sessionId: '1728318000',
 		arch: 'arm64',
 		version: '1.2.3',
 		ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
@@ -92,6 +132,8 @@ test('buildDownloadServedPayload builds a well-formed Measurement Protocol body'
 	const [event] = payload.events;
 	assert.equal(event.name, 'download_served');
 	assert.deepEqual(event.params, {
+		session_id: '1728318000',
+		engagement_time_msec: '100',
 		arch: 'arm64',
 		version: '1.2.3',
 		source: 'redirect',
@@ -102,6 +144,7 @@ test('buildDownloadServedPayload builds a well-formed Measurement Protocol body'
 test('buildDownloadServedPayload omits user_agent, ip_override and timestamp_micros when absent', () => {
 	const payload = buildDownloadServedPayload({
 		clientId: 'random-id',
+		sessionId: '1700000000',
 		arch: 'x64',
 		version: null,
 		ua: '',
@@ -113,13 +156,16 @@ test('buildDownloadServedPayload omits user_agent, ip_override and timestamp_mic
 	assert.equal('user_agent' in payload, false);
 	assert.equal('ip_override' in payload, false);
 	assert.equal('timestamp_micros' in payload, false);
+	assert.equal(payload.events[0].params.session_id, '1700000000');
+	assert.equal(payload.events[0].params.engagement_time_msec, '100');
 	assert.equal(payload.events[0].params.version, 'unknown');
 	assert.equal(payload.events[0].params.referrer_host, 'direct');
 });
 
-test('buildDownloadServedPayload requires a clientId and an arch', () => {
-	assert.throws(() => buildDownloadServedPayload({ arch: 'arm64' }));
-	assert.throws(() => buildDownloadServedPayload({ clientId: 'abc' }));
+test('buildDownloadServedPayload requires a clientId, a sessionId and an arch', () => {
+	assert.throws(() => buildDownloadServedPayload({ sessionId: '123', arch: 'arm64' }));
+	assert.throws(() => buildDownloadServedPayload({ clientId: 'abc', arch: 'arm64' }));
+	assert.throws(() => buildDownloadServedPayload({ clientId: 'abc', sessionId: '123' }));
 });
 
 test('ga4CollectUrl points at the real collect endpoint with measurement_id and api_secret', () => {

@@ -47,6 +47,46 @@ export function randomClientId() {
 }
 
 /*
+ * The gtag.js session lives in the _ga_<container-id> cookie, where
+ * container-id is the measurement id without its leading "G-". Two on-the-
+ * wire shapes exist: the older GS1.<n>.<session_id>.<session_number>... has
+ * the session id as the whole third dot-separated segment, and the newer
+ * GS2.<n>.s<session_id>$o<count>$g<engaged>$t<timestamp>$... has it after
+ * the leading "s" in that segment, terminated by "$". Returns null when
+ * there is no matching cookie or its value doesn't parse as either shape.
+ */
+export function extractSessionId(cookieHeader, measurementId = GA4_MEASUREMENT_ID) {
+	if (!cookieHeader) return null;
+	const containerId = String(measurementId).replace(/^G-/, '');
+	const pattern = new RegExp(`(?:^|;\\s*)_ga_${containerId}=([^;]+)`);
+	const match = String(cookieHeader).match(pattern);
+	if (!match) return null;
+	let value;
+	try {
+		value = decodeURIComponent(match[1]);
+	} catch (err) {
+		value = match[1];
+	}
+	const parts = value.split('.');
+	if (parts.length < 3) return null;
+	const segment = parts[2];
+	if (/^\d+$/.test(segment)) return segment;
+	const gs2Match = segment.match(/^s(\d+)/);
+	return gs2Match ? gs2Match[1] : null;
+}
+
+/*
+ * Used when there is no parseable session cookie (an ad blocker, a curl, a
+ * first-ever visit). GA4's Measurement Protocol just needs session_id to
+ * look like a session identifier tying this event to others nearby in
+ * time; the request's own timestamp in seconds is a reasonable stand-in,
+ * the same value gtag.js itself would seed a brand new session id from.
+ */
+export function fallbackSessionId(timestampMs) {
+	return String(Math.floor(timestampMs / 1000));
+}
+
+/*
  * x-forwarded-for can carry a comma-separated chain when a request passed
  * through more than one proxy; the first entry is the original client as
  * Vercel's edge network saw it.
@@ -83,6 +123,7 @@ export function refererHost(referer) {
  */
 export function buildDownloadServedPayload({
 	clientId,
+	sessionId,
 	arch,
 	version,
 	ua,
@@ -91,6 +132,7 @@ export function buildDownloadServedPayload({
 	timestampMs,
 }) {
 	if (!clientId) throw new Error('buildDownloadServedPayload requires clientId');
+	if (!sessionId) throw new Error('buildDownloadServedPayload requires sessionId');
 	if (!arch) throw new Error('buildDownloadServedPayload requires arch');
 
 	const payload = {
@@ -99,6 +141,12 @@ export function buildDownloadServedPayload({
 			{
 				name: 'download_served',
 				params: {
+					// Required for the event to show up in standard reports,
+					// Realtime included: developers.google.com/analytics/devguides/
+					// collection/protocol/ga4/reference/events says activity without
+					// both of these does not populate reports.
+					session_id: sessionId,
+					engagement_time_msec: '100',
 					arch,
 					version: version || 'unknown',
 					source: 'redirect',

@@ -23,6 +23,8 @@ import { parseUserAgent } from './_lib/ua.js';
 import {
 	extractClientId,
 	randomClientId,
+	extractSessionId,
+	fallbackSessionId,
 	firstForwardedIp,
 	buildDownloadServedPayload,
 	sendGa4Event,
@@ -105,13 +107,16 @@ function reportToGa4(req, { arch, version, ts }) {
 		return Promise.resolve();
 	}
 
-	const clientId = extractClientId(firstHeader(req.headers['cookie'])) || randomClientId();
+	const cookie = firstHeader(req.headers['cookie']);
+	const clientId = extractClientId(cookie) || randomClientId();
+	const sessionId = extractSessionId(cookie) || fallbackSessionId(ts.getTime());
 	const ua = firstHeader(req.headers['user-agent']) || '';
 	const ip = firstForwardedIp(firstHeader(req.headers['x-forwarded-for']), firstHeader(req.headers['x-real-ip']));
 	const referer = firstHeader(req.headers['referer']) || null;
 
 	const payload = buildDownloadServedPayload({
 		clientId,
+		sessionId,
 		arch,
 		version,
 		ua,
