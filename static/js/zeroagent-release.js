@@ -133,26 +133,7 @@ var RELEASE_FEED = {
 			});
 	}
 
-	function copyToClipboard(text, buttonEl) {
-		if (!navigator.clipboard) return;
-		navigator.clipboard.writeText(text).then(function () {
-			var original = buttonEl.textContent;
-			buttonEl.textContent = 'Copied';
-			setTimeout(function () { buttonEl.textContent = original; }, 1500);
-		});
-	}
-
 	document.addEventListener('DOMContentLoaded', function () {
 		init();
-
-		var copyButtons = document.querySelectorAll('[data-copy-target]');
-		for (var i = 0; i < copyButtons.length; i++) {
-			(function (btn) {
-				btn.addEventListener('click', function () {
-					var targetEl = document.getElementById(btn.getAttribute('data-copy-target'));
-					if (targetEl) copyToClipboard(targetEl.textContent, btn);
-				});
-			})(copyButtons[i]);
-		}
 	});
 })();
