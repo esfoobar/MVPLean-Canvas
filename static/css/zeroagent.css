@@ -30,6 +30,7 @@
 	padding: 0;
 	cursor: pointer;
 	border-bottom: 1px dotted #777;
+	white-space: pre-line;
 }
 
 .za-hero-cask code:hover {
@@ -117,6 +118,7 @@
 	background: none;
 	color: #EEE;
 	padding: 0;
+	white-space: pre-line;
 }
 
 .za-snippet-label {
