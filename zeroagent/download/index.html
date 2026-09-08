@@ -143,10 +143,13 @@
 					<div class="za-snippet topmargin-sm">
 						<div>
 							<span class="za-snippet-label">Homebrew</span>
-							<code id="za-homebrew-cmd">brew install --cask esfoobar/tap/zeroagent</code>
+							<code id="za-homebrew-cmd">brew trust zeroagentdev/tap
+brew install --cask zeroagentdev/tap/zeroagent</code>
 						</div>
 						<button type="button" class="za-copy-btn" data-copy-target="za-homebrew-cmd">Copy</button>
 					</div>
+
+					<p class="za-meta topmargin-sm">Homebrew 6 or newer needs that trust line before it will load the cask; older Homebrew can skip straight to installing.</p>
 
 					<div class="clearfix topmargin-sm bottommargin-lg">
 						<p class="center za-agree">By downloading, you agree to the <a href="/zeroagent/terms">Terms</a>
