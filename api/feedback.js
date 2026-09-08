@@ -6,8 +6,8 @@
  * compare against DOWNLOAD_STATS_TOKEN), returns the newest 100 so they
  * can be read without a database client.
  *
- * Storage is api/_lib/feedback-store.js, on Vercel Blob today; this file
- * only calls save() and listRecent() and never touches Blob directly.
+ * Storage is api/_lib/feedback-store.js, on MongoDB Atlas; this file only
+ * calls save() and listRecent() and never touches the database directly.
  *
  * Rate limiting below is a per-instance, in-memory best effort: a cold
  * start or a second concurrent instance resets or bypasses it, which a
