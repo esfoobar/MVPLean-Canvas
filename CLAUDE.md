@@ -8,6 +8,16 @@ Deployed on Vercel as project `mvp-lean-canvas`, team `mvpl-ean`.
 
 Default branch is `master`. Never commit to `master`. One issue, one branch, one PR.
 
+## Testing a branch in a worktree
+
+`vercel dev` and `vercel link` resolve the project link from the repository root, so running
+either one from inside a git worktree (under `.zeroagent/worktrees/`) silently operates on the
+main checkout at the repo root, not on the worktree: you end up serving master's code while
+believing you're testing your branch. Verify a branch instead through the PR's Vercel preview
+deployment, or by running `vercel dev` only after confirming the served code is the branch's
+(for example by temporarily printing a branch marker), or by pulling env with
+`vercel env pull` into the worktree and running the functions under a plain Node harness.
+
 ## The /zeroagent pages
 
 `/zeroagent/` and `/zeroagent/download/` are ZeroAgent's public landing and download
