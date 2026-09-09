@@ -139,3 +139,58 @@ test('405: anything but GET is method_not_allowed', async () => {
 	assert.equal(res.statusCode, 405);
 	assert.deepEqual(JSON.parse(res.body), { error: 'method_not_allowed' });
 });
+
+// ZA-224 / esfoobar/zeroagent#365. A device token (a `device` claim, minted
+// by api/auth/pair/claim.js) is read back here too: this is the one place
+// that checks the matching pairedDevices entry for revokedAt.
+
+test('200: a device token for an unrevoked device gets the entitlement, same as a desktop token', async () => {
+	const req = reqWithAuth(validToken({ device: 'dev_abc' }));
+	const res = fakeRes();
+	await handler(req, res, {
+		getUser: async () => ({
+			githubId: 1234567,
+			login: 'octocat',
+			plan: 'free',
+			trialEnds: '2026-10-08T00:00:00.000Z',
+			planUntil: null,
+			pairedDevices: [{ deviceId: 'dev_abc', tokenHash: 'h', name: 'iPhone', createdAt: 'x', revokedAt: null }],
+		}),
+	});
+	assert.equal(res.statusCode, 200);
+	assert.deepEqual(JSON.parse(res.body), { plan: 'free', trialEnds: '2026-10-08T00:00:00.000Z', planUntil: null, relayAllowed: true });
+});
+
+test('401: a device token whose entry has been revoked is unauthorized', async () => {
+	const req = reqWithAuth(validToken({ device: 'dev_abc' }));
+	const res = fakeRes();
+	await handler(req, res, {
+		getUser: async () => ({
+			githubId: 1234567,
+			login: 'octocat',
+			plan: 'free',
+			trialEnds: '2026-10-08T00:00:00.000Z',
+			planUntil: null,
+			pairedDevices: [{ deviceId: 'dev_abc', tokenHash: 'h', name: 'iPhone', createdAt: 'x', revokedAt: '2026-09-08T21:10:00.000Z' }],
+		}),
+	});
+	assert.equal(res.statusCode, 401);
+	assert.deepEqual(JSON.parse(res.body), { error: 'unauthorized' });
+});
+
+test('401: a device token whose deviceId is not in pairedDevices at all is unauthorized', async () => {
+	const req = reqWithAuth(validToken({ device: 'dev_gone' }));
+	const res = fakeRes();
+	await handler(req, res, {
+		getUser: async () => ({
+			githubId: 1234567,
+			login: 'octocat',
+			plan: 'free',
+			trialEnds: '2026-10-08T00:00:00.000Z',
+			planUntil: null,
+			pairedDevices: [{ deviceId: 'dev_abc', tokenHash: 'h', name: 'iPhone', createdAt: 'x', revokedAt: null }],
+		}),
+	});
+	assert.equal(res.statusCode, 401);
+	assert.deepEqual(JSON.parse(res.body), { error: 'unauthorized' });
+});

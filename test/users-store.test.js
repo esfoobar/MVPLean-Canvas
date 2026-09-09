@@ -5,26 +5,50 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { upsertOnSignInWithCollection, getUserWithCollection } from '../api/_lib/users-store.js';
+import {
+	upsertOnSignInWithCollection,
+	getUserWithCollection,
+	addPairedDeviceWithCollection,
+	listPairedDevicesWithCollection,
+	revokePairedDeviceWithCollection,
+} from '../api/_lib/users-store.js';
 import { trialEndsFrom } from '../api/_lib/entitlement.js';
 
 function fakeCollection(seed = []) {
 	const docs = new Map(seed.map((doc) => [doc._id, { ...doc }]));
 	return {
 		async findOneAndUpdate(filter, update, options) {
-			assert.equal(options.upsert, true);
 			assert.equal(options.returnDocument, 'after');
 			let doc = docs.get(filter._id);
 			if (!doc) {
+				if (!options.upsert) return null;
 				doc = { _id: filter._id, ...(update.$setOnInsert || {}) };
 			}
-			Object.assign(doc, update.$set || {});
+			const deviceRevoke = update.$set && update.$set['pairedDevices.$.revokedAt'];
+			if (deviceRevoke !== undefined) {
+				const entry = (doc.pairedDevices || []).find((d) => d.deviceId === filter['pairedDevices.deviceId']);
+				if (!entry) return null;
+				entry.revokedAt = deviceRevoke;
+			} else {
+				Object.assign(doc, update.$set || {});
+			}
 			docs.set(filter._id, doc);
 			return { ...doc };
 		},
-		async findOne(filter) {
+		async findOne(filter, options) {
 			const doc = docs.get(filter._id);
-			return doc ? { ...doc } : null;
+			if (!doc) return null;
+			if (options && options.projection && options.projection.pairedDevices) {
+				return { pairedDevices: doc.pairedDevices };
+			}
+			return { ...doc };
+		},
+		async updateOne(filter, update) {
+			const doc = docs.get(filter._id);
+			if (!doc) return;
+			if (update.$push && update.$push.pairedDevices) {
+				doc.pairedDevices = [...(doc.pairedDevices || []), update.$push.pairedDevices];
+			}
 		},
 	};
 }
@@ -94,4 +118,70 @@ test('getUserWithCollection normalizes _id back to githubId', async () => {
 	assert.equal(user.githubId, 7);
 	assert.equal('_id' in user, false);
 	assert.equal(user.plan, 'platinum');
+});
+
+// ZA-224 / esfoobar/zeroagent#365. pairedDevices: append, list, revoke.
+
+test('addPairedDeviceWithCollection appends an entry with revokedAt null', async () => {
+	const collection = fakeCollection([{ _id: 42, login: 'octocat', plan: 'free', pairedDevices: [] }]);
+	const now = new Date('2026-09-08T21:00:00.000Z');
+	const entry = await addPairedDeviceWithCollection(collection, {
+		githubId: 42,
+		deviceId: 'dev_abc',
+		tokenHash: 'hash-of-device-token',
+		name: "Jorge's iPhone",
+		now,
+	});
+	assert.deepEqual(entry, { deviceId: 'dev_abc', tokenHash: 'hash-of-device-token', name: "Jorge's iPhone", createdAt: now.toISOString(), revokedAt: null });
+
+	const user = await getUserWithCollection(collection, 42);
+	assert.deepEqual(user.pairedDevices, [entry]);
+});
+
+test('listPairedDevicesWithCollection never returns the token hash', async () => {
+	const collection = fakeCollection([
+		{
+			_id: 42,
+			login: 'octocat',
+			plan: 'free',
+			pairedDevices: [{ deviceId: 'dev_abc', tokenHash: 'secret-hash', name: 'iPhone', createdAt: 'x', revokedAt: null }],
+		},
+	]);
+	const devices = await listPairedDevicesWithCollection(collection, 42);
+	assert.deepEqual(devices, [{ deviceId: 'dev_abc', name: 'iPhone', createdAt: 'x', revokedAt: null }]);
+});
+
+test('listPairedDevicesWithCollection returns null for an account that does not exist', async () => {
+	const collection = fakeCollection();
+	const devices = await listPairedDevicesWithCollection(collection, 999);
+	assert.equal(devices, null);
+});
+
+test('revokePairedDeviceWithCollection sets revokedAt on the matching entry only', async () => {
+	const collection = fakeCollection([
+		{
+			_id: 42,
+			login: 'octocat',
+			plan: 'free',
+			pairedDevices: [
+				{ deviceId: 'dev_abc', tokenHash: 'h1', name: 'iPhone', createdAt: 'x', revokedAt: null },
+				{ deviceId: 'dev_xyz', tokenHash: 'h2', name: 'iPad', createdAt: 'x', revokedAt: null },
+			],
+		},
+	]);
+	const now = new Date('2026-09-08T21:10:00.000Z');
+	const entry = await revokePairedDeviceWithCollection(collection, { githubId: 42, deviceId: 'dev_abc', now });
+	assert.equal(entry.deviceId, 'dev_abc');
+	assert.equal(entry.revokedAt, now.toISOString());
+	assert.equal('tokenHash' in entry, false);
+
+	const devices = await listPairedDevicesWithCollection(collection, 42);
+	assert.equal(devices.find((d) => d.deviceId === 'dev_abc').revokedAt, now.toISOString());
+	assert.equal(devices.find((d) => d.deviceId === 'dev_xyz').revokedAt, null);
+});
+
+test('revokePairedDeviceWithCollection returns null for a deviceId that does not exist', async () => {
+	const collection = fakeCollection([{ _id: 42, login: 'octocat', plan: 'free', pairedDevices: [] }]);
+	const entry = await revokePairedDeviceWithCollection(collection, { githubId: 42, deviceId: 'dev_nope', now: new Date() });
+	assert.equal(entry, null);
 });
