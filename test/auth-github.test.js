@@ -57,6 +57,22 @@ function jsonFetchResponse(status, payload) {
 	};
 }
 
+// A fake users-store.upsertOnSignIn: this test file is only responsible for
+// the sign-in route's own contract, not the store's upsert semantics (that's
+// test/users-store.test.js), so every test that reaches the store injects
+// this instead of hitting a real MongoDB connection.
+function fakeUpsertOnSignIn(plan = 'free') {
+	return async ({ githubId, login }) => ({
+		githubId,
+		login,
+		plan,
+		createdAt: '2026-09-08T00:00:00.000Z',
+		trialEnds: '2026-10-08T00:00:00.000Z',
+		planUntil: null,
+		pairedDevices: [],
+	});
+}
+
 function base64urlDecode(segment) {
 	return JSON.parse(Buffer.from(segment, 'base64url').toString('utf8'));
 }
@@ -84,7 +100,7 @@ test('200: valid GitHub token mints a JWT matching the contract claims', async (
 
 	const req = reqWithBody({ github_token: 'good-token' });
 	const res = fakeRes();
-	await handler(req, res);
+	await handler(req, res, { upsertOnSignIn: fakeUpsertOnSignIn('free') });
 
 	assert.equal(res.statusCode, 200);
 	const parsed = JSON.parse(res.body);
@@ -113,6 +129,33 @@ test('200: valid GitHub token mints a JWT matching the contract claims', async (
 	assert.equal(signature, expectedSignature);
 
 	assert.equal(parsed.expires_at, new Date(payload.exp * 1000).toISOString());
+});
+
+test('200: a returning user gets the plan the store has for them, not a hardcoded free', async () => {
+	globalThis.fetch = async () => jsonFetchResponse(200, { id: 999, login: 'octocat' });
+	const req = reqWithBody({ github_token: 'good-token' });
+	const res = fakeRes();
+	await handler(req, res, { upsertOnSignIn: fakeUpsertOnSignIn('premium') });
+
+	assert.equal(res.statusCode, 200);
+	const parsed = JSON.parse(res.body);
+	assert.equal(parsed.plan, 'premium');
+	const { payload } = decodeJwt(parsed.token);
+	assert.equal(payload.plan, 'premium');
+});
+
+test('502: the store failing to upsert is account_store_unavailable', async () => {
+	globalThis.fetch = async () => jsonFetchResponse(200, { id: 999, login: 'octocat' });
+	const req = reqWithBody({ github_token: 'good-token' });
+	const res = fakeRes();
+	await handler(req, res, {
+		upsertOnSignIn: async () => {
+			throw new Error('connection refused');
+		},
+	});
+
+	assert.equal(res.statusCode, 502);
+	assert.deepEqual(JSON.parse(res.body), { error: 'account_store_unavailable' });
 });
 
 test('405: anything but POST is method_not_allowed', async () => {
@@ -235,7 +278,7 @@ test('never logs or echoes the GitHub token back', async () => {
 		globalThis.fetch = async () => jsonFetchResponse(200, { id: 42, login: 'octocat' });
 		const req = reqWithBody({ github_token: 'super-secret-token-value' });
 		const res = fakeRes();
-		await handler(req, res);
+		await handler(req, res, { upsertOnSignIn: fakeUpsertOnSignIn('free') });
 
 		assert.equal(res.body.includes('super-secret-token-value'), false);
 		for (const line of logged) {
