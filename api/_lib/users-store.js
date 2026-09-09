@@ -76,6 +76,39 @@ export async function getUserWithCollection(collection, githubId) {
 	return normalize(doc);
 }
 
+// ZA-224 / esfoobar/zeroagent#365. Appends a pairedDevices entry: the
+// device-token hash (never the token), a name, and createdAt. revokedAt
+// starts null and is set later by revokePairedDeviceWithCollection.
+export async function addPairedDeviceWithCollection(collection, { githubId, deviceId, tokenHash, name, now = new Date() }) {
+	const entry = { deviceId, tokenHash, name, createdAt: now.toISOString(), revokedAt: null };
+	await collection.updateOne({ _id: githubId }, { $push: { pairedDevices: entry } });
+	return entry;
+}
+
+// Returns null when the account itself does not exist, so a caller can tell
+// "no account" (404) apart from "account with no paired devices" ([]). The
+// token hash never leaves this store: callers only need to show a device's
+// name and dates, never what proves it.
+export async function listPairedDevicesWithCollection(collection, githubId) {
+	const doc = await collection.findOne({ _id: githubId }, { projection: { pairedDevices: 1 } });
+	if (!doc) return null;
+	return (doc.pairedDevices || []).map(({ tokenHash, ...rest }) => rest);
+}
+
+// Sets revokedAt on the one matching entry. Returns null when the account or
+// the deviceId within it does not exist, so the caller can answer 404.
+export async function revokePairedDeviceWithCollection(collection, { githubId, deviceId, now = new Date() }) {
+	const result = await collection.findOneAndUpdate(
+		{ _id: githubId, 'pairedDevices.deviceId': deviceId },
+		{ $set: { 'pairedDevices.$.revokedAt': now.toISOString() } },
+		{ returnDocument: 'after' }
+	);
+	const doc = result && 'value' in result ? result.value : result;
+	if (!doc) return null;
+	const { tokenHash, ...entry } = doc.pairedDevices.find((d) => d.deviceId === deviceId);
+	return entry;
+}
+
 export async function upsertOnSignIn({ githubId, login, now }) {
 	const collection = await getCollection();
 	return upsertOnSignInWithCollection(collection, { githubId, login, now });
@@ -84,4 +117,19 @@ export async function upsertOnSignIn({ githubId, login, now }) {
 export async function getUser(githubId) {
 	const collection = await getCollection();
 	return getUserWithCollection(collection, githubId);
+}
+
+export async function addPairedDevice(args) {
+	const collection = await getCollection();
+	return addPairedDeviceWithCollection(collection, args);
+}
+
+export async function listPairedDevices(githubId) {
+	const collection = await getCollection();
+	return listPairedDevicesWithCollection(collection, githubId);
+}
+
+export async function revokePairedDevice(args) {
+	const collection = await getCollection();
+	return revokePairedDeviceWithCollection(collection, args);
 }

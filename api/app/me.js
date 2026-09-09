@@ -6,6 +6,13 @@
  * and answers with the plan, the trial and renewal dates, and whether the
  * relay is allowed today (ZA-209 reads this at connect; ZA-216 is the phone
  * calling this same route).
+ *
+ * ZA-224 / esfoobar/zeroagent#365 reuses this same route for a device token
+ * (one carrying a `device` claim, minted by api/auth/pair/claim.js): this is
+ * the one place both token kinds are read back, so it is also the one place
+ * that checks a device's pairedDevices entry for revokedAt. A revoked or
+ * unknown device answers 401 unauthorized, the same code ZA-209's relay
+ * already treats as a refusal at connect, with no relay-side change needed.
  */
 
 import { verifyHs256 } from '../_lib/jwt.js';
@@ -53,6 +60,14 @@ export default async function handler(req, res, deps = {}) {
 	if (!user) {
 		sendJson(res, 404, { error: 'account_not_found' });
 		return;
+	}
+
+	if (typeof payload.device === 'string') {
+		const entry = (user.pairedDevices || []).find((d) => d.deviceId === payload.device);
+		if (!entry || entry.revokedAt) {
+			sendJson(res, 401, { error: 'unauthorized' });
+			return;
+		}
 	}
 
 	sendJson(res, 200, entitlementFor(user));
