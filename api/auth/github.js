@@ -1,38 +1,27 @@
 /*
  * ZA-129 / esfoobar/zeroagent#228. The desktop's GitHub device flow ends with
  * a GitHub access token, not a ZeroAgent account. This route verifies that
- * token against GitHub's own API and mints the ZeroAgent account JWT the
- * relay protocol expects at connect (ZA-209 reads it back, ZA-130 gives it a
- * real store).
+ * token against GitHub's own API, looks the account up (or creates it) in
+ * the users store (ZA-130 / esfoobar/zeroagent#229), and mints the ZeroAgent
+ * account JWT the relay protocol expects at connect (ZA-209 reads it back).
  *
- * The account id is deterministic from GitHub's numeric id (acct_gh<id>), so
- * there is no store yet and none is needed: ZA-130 can add real storage
- * later against the same ids without a migration. Plan is always "free"
- * until ZA-130 exists.
+ * The account id is deterministic from GitHub's numeric id (acct_gh<id>).
+ * Plan comes from the users store now rather than being hardcoded: free on
+ * first sign-in, whatever an admin has since set it to on every one after.
  *
- * HS256 is hand-rolled with node:crypto rather than pulling in a JWT
- * library: jose only reaches this project today as a transitive dependency
- * of @vercel/oidc, and a signer this small is not worth an explicit
- * dependency.
+ * HS256 is hand-rolled with node:crypto (api/_lib/jwt.js) rather than
+ * pulling in a JWT library: jose only reaches this project today as a
+ * transitive dependency of @vercel/oidc, and a signer this small is not
+ * worth an explicit dependency.
  */
 
-import { createHmac } from 'node:crypto';
+import { signHs256 } from '../_lib/jwt.js';
+import { upsertOnSignIn as defaultUpsertOnSignIn } from '../_lib/users-store.js';
 
 const GITHUB_USER_URL = 'https://api.github.com/user';
 const GITHUB_TIMEOUT_MS = 10_000;
 const JWT_TTL_SECONDS = 30 * 24 * 60 * 60;
 const ISSUER = 'https://mvplean.com';
-
-function base64url(input) {
-	return Buffer.from(input).toString('base64url');
-}
-
-function signJwtHs256(claims, secret) {
-	const header = { alg: 'HS256', typ: 'JWT' };
-	const signingInput = `${base64url(JSON.stringify(header))}.${base64url(JSON.stringify(claims))}`;
-	const signature = createHmac('sha256', secret).update(signingInput).digest('base64url');
-	return `${signingInput}.${signature}`;
-}
 
 function sendError(res, status, error) {
 	res.statusCode = status;
@@ -59,7 +48,9 @@ async function fetchGithubUser(githubToken) {
 	}
 }
 
-export default async function handler(req, res) {
+export default async function handler(req, res, deps = {}) {
+	const upsertOnSignIn = deps.upsertOnSignIn || defaultUpsertOnSignIn;
+
 	if (req.method !== 'POST') {
 		sendError(res, 405, 'method_not_allowed');
 		return;
@@ -118,12 +109,20 @@ export default async function handler(req, res) {
 		return;
 	}
 
+	let userRecord;
+	try {
+		userRecord = await upsertOnSignIn({ githubId: user.id, login: user.login });
+	} catch (err) {
+		sendError(res, 502, 'account_store_unavailable');
+		return;
+	}
+
 	const account = `acct_gh${user.id}`;
-	const plan = 'free';
+	const plan = userRecord.plan;
 	const iat = Math.floor(Date.now() / 1000);
 	const exp = iat + JWT_TTL_SECONDS;
 
-	const token = signJwtHs256(
+	const token = signHs256(
 		{
 			iss: ISSUER,
 			sub: account,
