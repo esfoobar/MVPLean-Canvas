@@ -1,6 +1,25 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"trailingSlash": false,
+	"headers": [
+		{
+			"source": "/api/(.*)",
+			"headers": [
+				{ "key": "X-Content-Type-Options", "value": "nosniff" }
+			]
+		},
+		{
+			"source": "/((?!api/).*)",
+			"headers": [
+				{ "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
+				{ "key": "X-Content-Type-Options", "value": "nosniff" },
+				{ "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+				{ "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+				{ "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+				{ "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'sha256-oyqAs9498uc9KQrctV8CwWm60FVFjr3G5mzHfhZP7Sg=' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" }
+			]
+		}
+	],
 	"rewrites": [
 		{
 			"source": "/zeroagent/download/:arch(arm64|x64)",
