@@ -18,14 +18,26 @@ deployment, or by running `vercel dev` only after confirming the served code is 
 (for example by temporarily printing a branch marker), or by pulling env with
 `vercel env pull` into the worktree and running the functions under a plain Node harness.
 
-## The /zeroagent pages
+## Projects section and the retired /zeroagent pages
 
-`/zeroagent/` and `/zeroagent/download/` are ZeroAgent's public landing and download
-pages, tracked as issues in the `zeroagent` repo (ticket prefix `ZA-`), not here. ZA-149 has
-shipped, so they no longer carry `<meta name="robots" content="noindex">` and all four
-(`/zeroagent/`, `/zeroagent/download/`, `/zeroagent/terms/`, `/zeroagent/privacy/`) are
-listed in `sitemap.xml`. `/zeroagent/stats/` is the exception: it keeps its `noindex` and
-stays out of the sitemap. Do not add a `Disallow` for it to `robots.txt`, because a
-crawler blocked from fetching the page never sees the `noindex` on it. Page-specific
-assets live under `static/css/zeroagent.css` and `static/js/zeroagent-release.js`,
-separate from the homepage's `custom.css` so the existing homepage stays untouched.
+ZeroAgent's public site moved to `https://zeroagenthq.com` (repo `esfoobar/zeroagent-site`,
+tracked in the `zeroagent` repo, ticket prefix `ZA-`). The homepage's `#section-projects`
+(reached from the header nav) replaces the old ZeroAgent promo banner and landing pages:
+it lists MVPLean's own projects, ZeroAgent first, linking straight out to zeroagenthq.com.
+Add future MVPLean projects here as more cards in the same section, not as pages under
+this repo.
+
+`vercel.json` carries permanent redirects (ZA-286) from `/zeroagent`, `/zeroagent/download`,
+`/zeroagent/terms`, `/zeroagent/privacy` and `/zeroagent/stats` to their zeroagenthq.com
+equivalents, since those old URLs may still be linked or indexed elsewhere. The retired page
+files under `zeroagent/` and their page-specific assets (`static/css/zeroagent.css`,
+`static/js/zeroagent-arch.js`, `static/js/zeroagent-copy.js`, `static/js/zeroagent-release.js`)
+are unreachable now that the redirects intercept those paths before the filesystem serves
+them, but stay checked in until a separate cleanup ticket removes them. `sitemap.xml` no
+longer lists any `/zeroagent/*` page; the new site carries its own `sitemap.xml` and
+`robots.txt`.
+
+The API under `/api/*` and the counted download redirects at `/zeroagent/download/arm64`
+and `/zeroagent/download/x64` (a Vercel function that logs the download and 302s to the
+CDN) are exact-path matches that the `/zeroagent/download` redirect above does not catch,
+and stay on mvplean.com until ZA-289 moves them to zeroagenthq.com.
