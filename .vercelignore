@@ -1,0 +1,5 @@
+# ZA-289: the API moved to api.zeroagenthq.com (zeroagent-site). The files under api/
+# stay in the repo until ZA-292 removes them, but they are no longer deployed, so the
+# /api/:path* rewrite in vercel.json is what answers. Vercel serves a project's own
+# functions before it applies rewrites; without this line the old copies would win.
+api
