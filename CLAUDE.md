@@ -37,7 +37,13 @@ them, but stay checked in until a separate cleanup ticket removes them. `sitemap
 longer lists any `/zeroagent/*` page; the new site carries its own `sitemap.xml` and
 `robots.txt`.
 
-The API under `/api/*` and the counted download redirects at `/zeroagent/download/arm64`
-and `/zeroagent/download/x64` (a Vercel function that logs the download and 302s to the
-CDN) are exact-path matches that the `/zeroagent/download` redirect above does not catch,
-and stay on mvplean.com until ZA-289 moves them to zeroagenthq.com.
+The API under `/api/*` and the counted download at `/zeroagent/download/arm64` and
+`/zeroagent/download/x64` are exact-path matches that the `/zeroagent/download` redirect
+above does not catch, and both moved to zeroagenthq.com under ZA-289 (2026-09-10): `/api/*`
+is a `vercel.json` rewrite proxying to `api.zeroagenthq.com`, and `/zeroagent/download/:arch`
+is a temporary redirect onto the same counted download endpoint there, which now does the
+logging and the 302 to the CDN that a local function used to do. The old `api/` functions,
+including that download redirect's own former implementation, are excluded from deployment
+by `.vercelignore` so the rewrite is what actually answers (Vercel serves a project's own
+functions before it applies rewrites); the files themselves stay checked in until ZA-292
+removes them.
