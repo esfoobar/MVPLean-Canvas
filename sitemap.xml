@@ -6,26 +6,4 @@
     <priority>0</priority>
   </url>
 
-  <url>
-    <loc>https://mvplean.com/zeroagent</loc>
-    <lastmod>2026-09-05</lastmod>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://mvplean.com/zeroagent/download</loc>
-    <lastmod>2026-09-05</lastmod>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://mvplean.com/zeroagent/terms</loc>
-    <priority>0</priority>
-  </url>
-
-  <url>
-    <loc>https://mvplean.com/zeroagent/privacy</loc>
-    <priority>0</priority>
-  </url>
-
 </urlset>
